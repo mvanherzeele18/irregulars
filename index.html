@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Irregular verbs leren</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef2f7;--card:#fff;--ink:#14213d;--mute:#5b6781;--line:#d3dbe8;--acc:#2b4cff;--mark:#ffd23f;--ok:#1f9d6b;--bad:#d6402f;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1626;--card:#18213a;--ink:#e8edf8;--mute:#9aa7c4;--line:#2b3757;--acc:#7f95ff;--mark:#c79a00;--ok:#3ecf94;--bad:#ff7a69}}
+:root[data-theme="dark"]{--bg:#0f1626;--card:#18213a;--ink:#e8edf8;--mute:#9aa7c4;--line:#2b3757;--acc:#7f95ff;--mark:#c79a00;--ok:#3ecf94;--bad:#ff7a69}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{max-width:860px;margin:0 auto;padding:28px 18px 8px}
+h1{font:800 clamp(2rem,6vw,3.2rem)/1 "Bricolage Grotesque",system-ui,sans-serif;margin:0 0 6px;letter-spacing:-.02em}
+h1 span{background:linear-gradient(transparent 55%,var(--mark) 55%)}
+header p{margin:0;color:var(--mute)}
+nav{max-width:860px;margin:14px auto 0;padding:0 18px;display:flex;gap:6px;border-bottom:2px solid var(--line)}
+nav button{font:inherit;font-weight:600;background:none;border:0;padding:10px 14px;color:var(--mute);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
+nav button[aria-selected=true]{color:var(--ink);border-color:var(--acc)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+main{max-width:860px;margin:0 auto;padding:18px}
+section[hidden]{display:none}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:14px}
+input[type=search],input[type=text]{font:inherit;padding:10px 12px;border:2px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);min-width:0}
+input[type=search]{flex:1 1 180px}
+.btn{font:inherit;font-weight:600;padding:10px 16px;border-radius:8px;border:2px solid var(--ink);background:var(--card);color:var(--ink);cursor:pointer}
+.btn.p{background:var(--acc);border-color:var(--acc);color:#fff}
+.btn.s{padding:6px 10px;font-size:.9rem}
+.tw{overflow-x:auto;background:var(--card);border:2px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;min-width:420px}
+th,td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--line)}
+th{font-weight:800;font-size:.9rem;color:var(--mute)}
+tr:last-child td{border-bottom:0}
+td:first-child{font-weight:800}
+td.cv{cursor:pointer;background:var(--line);color:transparent;user-select:none}
+td.cv.on{background:none;color:inherit;user-select:auto}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chip{background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:3px 10px;font-size:.88rem}
+.tr{background:var(--card);border:2px solid var(--line);border-radius:10px;padding:16px 18px;margin-bottom:14px}
+.tr h3{margin:0 0 4px;font:800 1.2rem/1.2 "Bricolage Grotesque",system-ui,sans-serif}
+.tr p{margin:4px 0}
+.tr .ex{color:var(--mute);font-size:.95rem}
+.tr .btn{margin-top:12px}
+.q{background:var(--card);border:2px solid var(--line);border-radius:12px;padding:24px 20px;text-align:center}
+.q .inf{font:800 clamp(2.4rem,9vw,3.6rem)/1 "Bricolage Grotesque",system-ui,sans-serif;margin:8px 0 18px}
+.fs{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:520px;margin:0 auto 16px}
+.fs label{display:block;text-align:left;font-size:.85rem;color:var(--mute);margin-bottom:4px}
+.fs input{width:100%;font-size:1.1rem}
+.fs input.ok{border-color:var(--ok)}.fs input.no{border-color:var(--bad)}
+.msg{min-height:1.6em;margin:0 0 12px;font-weight:600}
+.msg.ok{color:var(--ok)}.msg.no{color:var(--bad)}
+.stat{display:flex;justify-content:center;gap:20px;color:var(--mute);margin-bottom:6px;flex-wrap:wrap}
+select{font:inherit;padding:9px;border:2px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink)}
+@media(max-width:480px){.fs{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Irregular <span>verbs</span></h1>
+  <p>Leer de lijst, ontdek de patronen en test jezelf.</p>
+</header>
+<nav role="tablist">
+  <button role="tab" data-t="lijst" aria-selected="true">Lijst</button>
+  <button role="tab" data-t="trucs" aria-selected="false">Trucjes</button>
+  <button role="tab" data-t="oefen" aria-selected="false">Oefenen</button>
+</nav>
+<main>
+<section id="lijst">
+  <div class="bar">
+    <input type="search" id="zoek" placeholder="Zoek een werkwoord…" aria-label="Zoek een werkwoord">
+    <button class="btn s" id="hide">Verberg vorm 2 en 3</button>
+  </div>
+  <div class="tw"><table><thead><tr><th>Infinitief</th><th>Past simple</th><th>Past participle</th></tr></thead><tbody id="tb"></tbody></table></div>
+  <p class="ex" id="lh" style="color:var(--mute);font-size:.9rem" hidden>Tik op een grijs vakje om het antwoord te tonen.</p>
+</section>
+
+<section id="trucs" hidden></section>
+
+<section id="oefen" hidden>
+  <div class="bar">
+    <label for="pool">Oefen met:</label>
+    <select id="pool"></select>
+  </div>
+  <div class="q">
+    <div class="stat"><span>Goed: <b id="sg">0</b></span><span>Fout: <b id="sf">0</b></span><span>Reeks: <b id="ss">0</b></span></div>
+    <div class="inf" id="inf"></div>
+    <div class="fs">
+      <div><label for="a2">Past simple</label><input type="text" id="a2" autocomplete="off" autocapitalize="off" spellcheck="false"></div>
+      <div><label for="a3">Past participle</label><input type="text" id="a3" autocomplete="off" autocapitalize="off" spellcheck="false"></div>
+    </div>
+    <p class="msg" id="msg" aria-live="polite"></p>
+    <button class="btn p" id="chk">Controleer</button>
+    <button class="btn" id="show">Toon antwoord</button>
+  </div>
+  <p style="color:var(--mute);font-size:.9rem">Bij meerdere goede vormen (bv. <i>hung/hanged</i>) volstaat één ervan.</p>
+</section>
+</main>
+
+<script>
+const RAW=`arise-arose-arisen
+be-was/were-been
+bear-bore-born/borne
+beat-beat-beaten
+become-became-become
+begin-began-begun
+bend-bent-bent
+bet-bet-bet
+bid-bid/bade-bid/bidden
+bite-bit-bitten
+blow-blew-blown
+break-broke-broken
+bring-brought-brought
+build-built-built
+burst-burst-burst
+buy-bought-bought
+cast-cast-cast
+catch-caught-caught
+choose-chose-chosen
+come-came-come
+cost-cost-cost
+cut-cut-cut
+deal-dealt-dealt
+dig-dug-dug
+do-did-done
+draw-drew-drawn
+drink-drank-drunk
+drive-drove-driven
+eat-ate-eaten
+fall-fell-fallen
+feed-fed-fed
+feel-felt-felt
+fight-fought-fought
+find-found-found
+fly-flew-flown
+forget-forgot-forgotten
+forgive-forgave-forgiven
+freeze-froze-frozen
+get-got-got/gotten
+give-gave-given
+go-went-gone
+grow-grew-grown
+hang-hanged/hung-hanged/hung
+have-had-had
+hear-heard-heard
+hide-hid-hidden
+hit-hit-hit
+hold-held-held
+hurt-hurt-hurt
+keep-kept-kept
+know-knew-known
+lay-laid-laid
+lead-led-led
+leave-left-left
+lend-lent-lent
+let-let-let
+lie-lay-lain
+light-lit-lit/lighted
+lose-lost-lost
+make-made-made
+mean-meant-meant
+meet-met-met
+pay-paid-paid
+prove-proved-proved/proven
+put-put-put
+quit-quit-quit
+read-read-read
+ride-rode-ridden
+ring-rang-rung
+rise-rose-risen
+run-ran-run
+say-said-said
+see-saw-seen
+seek-sought-sought
+sell-sold-sold
+send-sent-sent
+set-set-set
+shake-shook-shaken
+shine-shone/shined-shone/shined
+shoot-shot-shot
+show-showed-shown
+shut-shut-shut
+sing-sang-sung
+sink-sank-sunk
+sit-sat-sat
+sleep-slept-slept
+slide-slid-slid
+speak-spoke-spoken
+spend-spent-spent
+split-split-split
+spread-spread-spread
+stand-stood-stood
+steal-stole-stolen
+stick-stuck-stuck
+strike-struck-struck
+swear-swore-sworn
+swim-swam-swum
+take-took-taken
+teach-taught-taught
+tear-tore-torn
+tell-told-told
+think-thought-thought
+throw-threw-thrown
+understand-understood-understood
+undertake-undertook-undertaken
+upset-upset-upset
+wake-woke-woken
+wear-wore-worn
+win-won-won
+wind-wound-wound
+write-wrote-written`;
+const V=RAW.split("\n").map(l=>l.split("-"));
+const E=(s,...x)=>x.some(e=>s.endsWith(e));
+const T=[
+{t:"Eindigt de infinitief op -end?",d:"Dan eindigen vorm 2 en 3 allebei op -ent.",c:a=>E(a,"end"),r:(a,b,c)=>b==c&&b==a.slice(0,-1)+"t"},
+{t:"Begint het met c, h, p, q of u én eindigt het op t?",d:"Dan zijn vorm 1, 2 en 3 precies hetzelfde.",c:a=>/^[chpqu]/.test(a)&&a.endsWith("t"),r:(a,b,c)=>a==b&&b==c},
+{t:"Eindigt de infinitief op -eed, -eel, -eep of -eet?",d:"Dan zijn vorm 2 en 3 hetzelfde en wordt de ee een korte e (soms met een t erachter).",c:a=>E(a,"eed","eel","eep","eet"),r:(a,b,c)=>b==c&&b.includes("e")&&!b.includes("ee")},
+{t:"Eindigt de infinitief op -ell?",d:"Dan worden vorm 2 en 3 allebei -old.",c:a=>E(a,"ell"),r:(a,b,c)=>b==c&&b==a.slice(0,-3)+"old"},
+{t:"Eindigt de infinitief op -ind?",d:"Dan worden vorm 2 en 3 allebei -ound.",c:a=>E(a,"ind"),r:(a,b,c)=>b==c&&b==a.slice(0,-3)+"ound"},
+{t:"Eindigt de infinitief op -ay?",d:"Dan worden vorm 2 en 3 allebei -aid.",c:a=>E(a,"ay"),r:(a,b,c)=>b==c&&b==a.slice(0,-2)+"aid"},
+{t:"Eindigt de infinitief op -ch?",d:"Dan worden vorm 2 en 3 allebei -aught.",c:a=>E(a,"ch"),r:(a,b,c)=>b==c&&b.endsWith("aught")},
+{t:"Eindigt vorm 2 op -ought of -aught?",d:"Dan is vorm 3 precies hetzelfde als vorm 2.",c:(a,b)=>E(b,"ought","aught"),r:(a,b,c)=>b==c},
+{t:"Eindigt vorm 2 op -ew?",d:"Dan eindigt vorm 3 op -wn.",c:(a,b)=>E(b,"ew"),r:(a,b,c)=>c.endsWith("wn")},
+{t:"Eindigt vorm 2 op -an, -am, -ang of -ank?",d:"Dan krijgt vorm 3 een u op die plek (a wordt u).",c:(a,b)=>/a(n|m|ng|nk)$/.test(b),r:(a,b,c)=>c==b.replace(/a(n|m|ng|nk)$/,"u$1")},
+{t:"Eindigt vorm 2 op o + medeklinker + e (-oke, -ole, -ore, -ose, -ove, -ode, -ote, -oze)?",d:"Dan eindigt vorm 3 op -n.",c:(a,b)=>/o[klrsvdtz]e$/.test(b),r:(a,b,c)=>c.split("/").some(x=>x.endsWith("n"))},
+{t:"Eindigt de infinitief op -ive of -ise?",d:"Dan is vorm 3 de infinitief + n.",c:a=>E(a,"ive","ise"),r:(a,b,c)=>c==a+"n"}
+];
+const M=T.map(t=>V.filter(v=>t.c(...v)));
+const cov=new Set(M.flat().map(v=>v[0]));
+const REST=V.filter(v=>!cov.has(v[0]));
+const fm=v=>v.join(" – ");
+const $=s=>document.querySelector(s);
+// tabs
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>show(b.dataset.t));
+function show(id){document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-selected",b.dataset.t===id));document.querySelectorAll("section").forEach(s=>s.hidden=s.id!==id);if(id==="oefen")next()}
+// list
+let hidden=false;
+function render(){const q=$("#zoek").value.trim().toLowerCase();
+ $("#tb").innerHTML=V.filter(v=>!q||v[0].includes(q)).map(v=>`<tr><td>${v[0]}</td><td class="${hidden?"cv":""}">${v[1]}</td><td class="${hidden?"cv":""}">${v[2]}</td></tr>`).join("");
+ $("#lh").hidden=!hidden}
+$("#zoek").oninput=render;
+$("#hide").onclick=()=>{hidden=!hidden;$("#hide").textContent=hidden?"Toon alles":"Verberg vorm 2 en 3";render()};
+$("#tb").onclick=e=>{if(e.target.classList.contains("cv"))e.target.classList.toggle("on")};
+render();
+// tricks
+$("#trucs").innerHTML='<p style="color:var(--mute);margin-top:0">Elke regel hieronder is gecontroleerd op de hele lijst: er zijn geen uitzonderingen. Staat de voorwaarde er, dan geldt het resultaat altijd.</p>'+T.map((t,i)=>`<article class="tr"><h3>${t.t}</h3><p><b>${t.d}</b></p><p class="ex">Klopt voor alle ${M[i].length} werkwoorden in de lijst met deze voorwaarde:</p><div class="chips">${M[i].map(v=>`<span class="chip">${fm(v)}</span>`).join("")}</div><button class="btn s" data-i="${i}">Oefen deze groep</button></article>`).join("")+`<article class="tr"><h3>Geen regel? Dan moet je ze stampen</h3><p class="ex">Deze ${REST.length} werkwoorden vallen buiten alle regels hierboven.</p><div class="chips">${REST.map(v=>`<span class="chip">${fm(v)}</span>`).join("")}</div><button class="btn s" data-i="x">Oefen deze groep</button></article>`;
+$("#trucs").onclick=e=>{const i=e.target.dataset.i;if(i!==undefined){$("#pool").value=i;show("oefen")}};
+// practice
+$("#pool").innerHTML='<option value="all">Alle werkwoorden</option>'+T.map((t,i)=>`<option value="${i}">${t.t.length>50?t.t.slice(0,48)+"…":t.t}</option>`).join("")+'<option value="x">Werkwoorden zonder regel</option>';
+let cur,g=0,f=0,s=0,done=false;
+function pool(){const p=$("#pool").value;return p==="all"?V:p==="x"?REST:M[p]}
+function next(){const P=pool();let n;do{n=P[Math.floor(Math.random()*P.length)]}while(P.length>1&&n===cur);cur=n;done=false;
+ $("#inf").textContent=n[0];["a2","a3"].forEach(id=>{const i=$("#"+id);i.value="";i.className="";i.disabled=false});
+ $("#msg").textContent="";$("#msg").className="msg";$("#chk").textContent="Controleer";$("#a2").focus()}
+function ok(ans,cor){const alts=cor.split("/"),tk=ans.trim().toLowerCase().split("/").map(x=>x.trim()).filter(Boolean);return tk.length>0&&tk.every(x=>alts.includes(x))}
+function check(){if(done){next();return}
+ const r2=ok($("#a2").value,cur[1]),r3=ok($("#a3").value,cur[2]);
+ $("#a2").className=r2?"ok":"no";$("#a3").className=r3?"ok":"no";
+ done=true;$("#chk").textContent="Volgende";
+ if(r2&&r3){g++;s++;$("#msg").textContent="Goed!";$("#msg").className="msg ok"}
+ else{f++;s=0;$("#msg").textContent=`Fout. Juist: ${cur[0]} – ${cur[1]} – ${cur[2]}`;$("#msg").className="msg no"}
+ stats()}
+function stats(){$("#sg").textContent=g;$("#sf").textContent=f;$("#ss").textContent=s}
+$("#chk").onclick=check;
+$("#show").onclick=()=>{if(done)return;done=true;f++;s=0;stats();$("#a2").value=cur[1];$("#a3").value=cur[2];$("#msg").textContent=`${cur[0]} – ${cur[1]} – ${cur[2]}`;$("#msg").className="msg";$("#chk").textContent="Volgende"};
+$("#pool").onchange=next;
+document.addEventListener("keydown",e=>{if(e.key==="Enter"&&!$("#oefen").hidden){e.preventDefault();check()}});
+</script>
+</body>
+</html>
