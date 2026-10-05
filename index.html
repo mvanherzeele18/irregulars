@@ -36,7 +36,7 @@ tr:last-child td{border-bottom:0}
 td:first-child{font-weight:800}
 td.cv{cursor:pointer;background:var(--line);color:transparent;user-select:none}
 td.cv.on{background:none;color:inherit;user-select:auto}
-.lr{color:var(--ok)}.spk{border:0;background:none;cursor:pointer;font-size:1rem;padding:0 6px;color:inherit}.pg{margin-bottom:14px}.pt{height:10px;background:var(--line);border-radius:6px;overflow:hidden;margin:6px 0 8px}#pb{height:100%;width:0;background:var(--ok);transition:width .3s}
+.lr{color:var(--ok)}.pg{margin-bottom:14px}.pt{height:10px;background:var(--line);border-radius:6px;overflow:hidden;margin:6px 0 8px}#pb{height:100%;width:0;background:var(--ok);transition:width .3s}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
 .chip{background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:3px 10px;font-size:.88rem}
 .tr{background:var(--card);border:2px solid var(--line);border-radius:10px;padding:16px 18px;margin-bottom:14px}
@@ -68,7 +68,6 @@ select{font:inherit;padding:9px;border:2px solid var(--line);border-radius:8px;b
   <button role="tab" data-t="oefen" aria-selected="false">Oefenen</button>
 </nav>
 <main>
-<p id="vn" hidden style="background:var(--mark);color:#14213d;padding:10px 14px;border-radius:8px;margin-top:0">Je apparaat heeft geen Engelse stem, dus de uitspraak klinkt verkeerd. Voeg een Engelse stem toe in de taal- of spraakinstellingen van je telefoon of computer.</p>
 <section id="lijst">
   <div class="bar">
     <input type="search" id="zoek" placeholder="Zoek een werkwoord…" aria-label="Zoek een werkwoord">
@@ -89,7 +88,6 @@ select{font:inherit;padding:9px;border:2px solid var(--line);border-radius:8px;b
   <div class="q">
     <div class="stat"><span>Vraag: <b id="sp"></b></span><span>Goed: <b id="sg">0</b></span><span>Fout: <b id="sf">0</b></span><span>Reeks: <b id="ss">0</b></span></div>
     <div class="inf" id="inf"></div>
-    <p style="margin:-8px 0 16px"><button class="btn s" id="spk">🔊 Luister</button></p>
     <div class="fs">
       <div><label for="a2">Past simple</label><input type="text" id="a2" autocomplete="off" autocapitalize="off" spellcheck="false"></div>
       <div><label for="a3">Past participle</label><input type="text" id="a3" autocomplete="off" autocapitalize="off" spellcheck="false"></div>
@@ -246,11 +244,11 @@ function show(id){document.querySelectorAll("nav button").forEach(b=>b.setAttrib
 // list
 let hidden=false;
 function render(){const q=$("#zoek").value.trim().toLowerCase();
- $("#tb").innerHTML=V.filter(v=>!q||v[0].includes(q)).map(v=>`<tr><td>${v[0]}${learned(v)?' <span class="lr">✓</span>':""}<button class="spk" data-n="${v[0]}" aria-label="Luister naar ${v[0]}">🔊</button></td><td class="${hidden?"cv":""}">${v[1]}</td><td class="${hidden?"cv":""}">${v[2]}</td></tr>`).join("");
+ $("#tb").innerHTML=V.filter(v=>!q||v[0].includes(q)).map(v=>`<tr><td>${v[0]}${learned(v)?' <span class="lr">✓</span>':""}</td><td class="${hidden?"cv":""}">${v[1]}</td><td class="${hidden?"cv":""}">${v[2]}</td></tr>`).join("");
  $("#lh").hidden=!hidden}
 $("#zoek").oninput=render;
 $("#hide").onclick=()=>{hidden=!hidden;$("#hide").textContent=hidden?"Toon alles":"Verberg vorm 2 en 3";render()};
-$("#tb").onclick=e=>{const b=e.target.closest(".spk");if(b){say(V.find(v=>v[0]===b.dataset.n),!hidden);return}if(e.target.classList.contains("cv"))e.target.classList.toggle("on")};
+$("#tb").onclick=e=>{if(e.target.classList.contains("cv"))e.target.classList.toggle("on")};
 render();
 // tricks
 $("#trucs").innerHTML='<p style="color:var(--mute);margin-top:0">Elke regel hieronder is gecontroleerd op de hele lijst: er zijn geen uitzonderingen. Staat de voorwaarde er, dan geldt het resultaat altijd.</p>'+T.map((t,i)=>`<article class="tr"><h3>${t.t}</h3><p><b>${t.d}</b></p><p class="ex">Klopt voor alle ${M[i].length} werkwoorden in de lijst met deze voorwaarde:</p><div class="chips">${M[i].map(v=>`<span class="chip">${fm(v)}</span>`).join("")}</div><button class="btn s" data-i="${i}">Oefen deze groep</button></article>`).join("")+`<article class="tr"><h3>Geen regel? Dan moet je ze stampen</h3><p class="ex">Deze ${REST.length} werkwoorden vallen buiten alle regels hierboven.</p><div class="chips">${REST.map(v=>`<span class="chip">${fm(v)}</span>`).join("")}</div><button class="btn s" data-i="x">Oefen deze groep</button></article>`;
@@ -282,14 +280,6 @@ function stats(){$("#sg").textContent=g;$("#sf").textContent=f;$("#ss").textCont
 $("#chk").onclick=check;
 $("#show").onclick=()=>{if(done||!cur)return;done=true;rec(cur[0],false);f++;s=0;stats();$("#a2").value=cur[1];$("#a3").value=cur[2];$("#msg").textContent=`${cur[0]} – ${cur[1]} – ${cur[2]}`;$("#msg").className="msg";$("#chk").textContent="Volgende"};
 $("#pool").onchange=reset;
-const TTS="speechSynthesis" in window;
-if(!TTS)document.head.insertAdjacentHTML("beforeend","<style>.spk,#spk{display:none}</style>");
-const PR={read:["reed","red","red"],lead:["leed"],wind:["wined","wownd","wownd"],tear:["tare"]};
-let EN=null;
-function pickVoice(){if(!TTS)return;const vs=speechSynthesis.getVoices();EN=vs.find(v=>v.lang.replace("_","-")==="en-GB")||vs.find(v=>/^en/i.test(v.lang))||null;$("#vn").hidden=!(vs.length&&!EN)}
-if(TTS){speechSynthesis.onvoiceschanged=pickVoice;pickVoice()}
-function say(v,all){if(!TTS||!v)return;speechSynthesis.cancel();(all?[0,1,2]:[0]).forEach(i=>{const t=((PR[v[0]]&&PR[v[0]][i])||v[i]).split("/").join(", ");const u=new SpeechSynthesisUtterance(t);u.lang="en-GB";if(EN)u.voice=EN;u.rate=.8;speechSynthesis.speak(u)})}
-$("#spk").onclick=()=>say(cur,done);
 function rec(n,ok){const x=st(n).slice();if(ok)x[0]++;else{x[0]=0;x[1]++}P[n]=x;save();prog()}
 function prog(){const n=V.filter(learned).length;$("#pn").textContent=n;$("#pb").style.width=(n/V.length*100)+"%";$('#pool option[value="m"]').textContent="Mijn fouten ("+V.filter(isMis).length+")"}
 let arm=0;$("#rs").onclick=()=>{if(!arm){arm=1;$("#rs").textContent="Zeker weten? Tik nogmaals";setTimeout(()=>{arm=0;$("#rs").textContent="Wis voortgang"},4000)}else{arm=0;P={};save();prog();$("#rs").textContent="Wis voortgang";reset()}};
