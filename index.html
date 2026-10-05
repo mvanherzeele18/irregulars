@@ -36,6 +36,7 @@ tr:last-child td{border-bottom:0}
 td:first-child{font-weight:800}
 td.cv{cursor:pointer;background:var(--line);color:transparent;user-select:none}
 td.cv.on{background:none;color:inherit;user-select:auto}
+.lr{color:var(--ok)}.pg{margin-bottom:14px}.pt{height:10px;background:var(--line);border-radius:6px;overflow:hidden;margin:6px 0 8px}#pb{height:100%;width:0;background:var(--ok);transition:width .3s}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
 .chip{background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:3px 10px;font-size:.88rem}
 .tr{background:var(--card);border:2px solid var(--line);border-radius:10px;padding:16px 18px;margin-bottom:14px}
@@ -79,6 +80,7 @@ select{font:inherit;padding:9px;border:2px solid var(--line);border-radius:8px;b
 <section id="trucs" hidden></section>
 
 <section id="oefen" hidden>
+  <div class="pg"><div>Geleerd: <b id="pn">0</b> van 111 <small style="color:var(--mute)">(3 keer goed op rij = geleerd)</small></div><div class="pt"><div id="pb"></div></div><button class="btn s" id="rs">Wis voortgang</button></div>
   <div class="bar">
     <label for="pool">Oefen met:</label>
     <select id="pool"></select>
@@ -211,6 +213,11 @@ win-won-won
 wind-wound-wound
 write-wrote-written`;
 const V=RAW.split("\n").map(l=>l.split("-"));
+let P={};try{P=JSON.parse(localStorage.getItem("iv-progress")||"{}")}catch(e){}
+const save=()=>{try{localStorage.setItem("iv-progress",JSON.stringify(P))}catch(e){}};
+const st=n=>P[n]||[0,0];
+const learned=v=>st(v[0])[0]>=3;
+const isMis=v=>{const x=st(v[0]);return x[1]>0&&x[0]<3};
 const E=(s,...x)=>x.some(e=>s.endsWith(e));
 const T=[
 {t:"Eindigt de infinitief op -end?",d:"Dan eindigen vorm 2 en 3 allebei op -ent.",c:a=>E(a,"end"),r:(a,b,c)=>b==c&&b==a.slice(0,-1)+"t"},
@@ -233,11 +240,11 @@ const fm=v=>v.join(" – ");
 const $=s=>document.querySelector(s);
 // tabs
 document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>show(b.dataset.t));
-function show(id){document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-selected",b.dataset.t===id));document.querySelectorAll("section").forEach(s=>s.hidden=s.id!==id);if(id==="oefen"&&!cur)reset()}
+function show(id){document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-selected",b.dataset.t===id));document.querySelectorAll("section").forEach(s=>s.hidden=s.id!==id);if(id==="lijst")render();if(id==="oefen"&&!cur)reset()}
 // list
 let hidden=false;
 function render(){const q=$("#zoek").value.trim().toLowerCase();
- $("#tb").innerHTML=V.filter(v=>!q||v[0].includes(q)).map(v=>`<tr><td>${v[0]}</td><td class="${hidden?"cv":""}">${v[1]}</td><td class="${hidden?"cv":""}">${v[2]}</td></tr>`).join("");
+ $("#tb").innerHTML=V.filter(v=>!q||v[0].includes(q)).map(v=>`<tr><td>${v[0]}${learned(v)?' <span class="lr">✓</span>':""}</td><td class="${hidden?"cv":""}">${v[1]}</td><td class="${hidden?"cv":""}">${v[2]}</td></tr>`).join("");
  $("#lh").hidden=!hidden}
 $("#zoek").oninput=render;
 $("#hide").onclick=()=>{hidden=!hidden;$("#hide").textContent=hidden?"Toon alles":"Verberg vorm 2 en 3";render()};
@@ -247,31 +254,36 @@ render();
 $("#trucs").innerHTML='<p style="color:var(--mute);margin-top:0">Elke regel hieronder is gecontroleerd op de hele lijst: er zijn geen uitzonderingen. Staat de voorwaarde er, dan geldt het resultaat altijd.</p>'+T.map((t,i)=>`<article class="tr"><h3>${t.t}</h3><p><b>${t.d}</b></p><p class="ex">Klopt voor alle ${M[i].length} werkwoorden in de lijst met deze voorwaarde:</p><div class="chips">${M[i].map(v=>`<span class="chip">${fm(v)}</span>`).join("")}</div><button class="btn s" data-i="${i}">Oefen deze groep</button></article>`).join("")+`<article class="tr"><h3>Geen regel? Dan moet je ze stampen</h3><p class="ex">Deze ${REST.length} werkwoorden vallen buiten alle regels hierboven.</p><div class="chips">${REST.map(v=>`<span class="chip">${fm(v)}</span>`).join("")}</div><button class="btn s" data-i="x">Oefen deze groep</button></article>`;
 $("#trucs").onclick=e=>{const i=e.target.dataset.i;if(i!==undefined){$("#pool").value=i;show("oefen");reset()}};
 // practice
-$("#pool").innerHTML='<option value="all">Alle werkwoorden</option>'+T.map((t,i)=>`<option value="${i}">${t.t.length>50?t.t.slice(0,48)+"…":t.t}</option>`).join("")+'<option value="x">Werkwoorden zonder regel</option>';
+$("#pool").innerHTML='<option value="all">Alle werkwoorden</option><option value="m">Mijn fouten</option>'+T.map((t,i)=>`<option value="${i}">${t.t.length>50?t.t.slice(0,48)+"…":t.t}</option>`).join("")+'<option value="x">Werkwoorden zonder regel</option>';
 let cur,g=0,f=0,s=0,done=false;
-function pool(){const p=$("#pool").value;return p==="all"?V:p==="x"?REST:M[p]}
+function pool(){const p=$("#pool").value;return p==="all"?V:p==="x"?REST:p==="m"?V.filter(isMis):M[p]}
 let deck=[],total=0,fresh=false;
 function reset(){deck=[];cur=null;next()}
 function next(){let fin=false;
  if(!deck.length){fin=!!cur;const P=pool().slice();for(let i=P.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[P[i],P[j]]=[P[j],P[i]]}
   if(P.length>1&&P[P.length-1]===cur){[P[0],P[P.length-1]]=[P[P.length-1],P[0]]}
   deck=P;total=P.length}
+ if(!deck.length){cur=null;$("#inf").textContent="Klaar!";$("#sp").textContent="0 van 0";["a2","a3"].forEach(id=>{const i=$("#"+id);i.value="";i.className="";i.disabled=true});$("#msg").textContent=$("#pool").value==="m"?"Geen fouten meer. Goed gedaan!":"Geen werkwoorden in deze groep.";$("#msg").className="msg";return}
  cur=deck.pop();done=false;
  $("#sp").textContent=(total-deck.length)+" van "+total;
  $("#inf").textContent=cur[0];["a2","a3"].forEach(id=>{const i=$("#"+id);i.value="";i.className="";i.disabled=false});
  $("#msg").textContent=fin?"Reeks klaar! Hier begint een nieuwe reeks.":"";$("#msg").className="msg";$("#chk").textContent="Controleer";$("#a2").focus()}
 function ok(ans,cor){const alts=cor.split("/"),tk=ans.trim().toLowerCase().split("/").map(x=>x.trim()).filter(Boolean);return tk.length>0&&tk.every(x=>alts.includes(x))}
-function check(){if(done){next();return}
+function check(){if(!cur)return;if(done){next();return}
  const r2=ok($("#a2").value,cur[1]),r3=ok($("#a3").value,cur[2]);
  $("#a2").className=r2?"ok":"no";$("#a3").className=r3?"ok":"no";
- done=true;$("#chk").textContent="Volgende";
+ done=true;$("#chk").textContent="Volgende";rec(cur[0],r2&&r3);
  if(r2&&r3){g++;s++;$("#msg").textContent="Goed!";$("#msg").className="msg ok"}
  else{f++;s=0;$("#msg").textContent=`Fout. Juist: ${cur[0]} – ${cur[1]} – ${cur[2]}`;$("#msg").className="msg no"}
  stats()}
 function stats(){$("#sg").textContent=g;$("#sf").textContent=f;$("#ss").textContent=s}
 $("#chk").onclick=check;
-$("#show").onclick=()=>{if(done)return;done=true;f++;s=0;stats();$("#a2").value=cur[1];$("#a3").value=cur[2];$("#msg").textContent=`${cur[0]} – ${cur[1]} – ${cur[2]}`;$("#msg").className="msg";$("#chk").textContent="Volgende"};
+$("#show").onclick=()=>{if(done||!cur)return;done=true;rec(cur[0],false);f++;s=0;stats();$("#a2").value=cur[1];$("#a3").value=cur[2];$("#msg").textContent=`${cur[0]} – ${cur[1]} – ${cur[2]}`;$("#msg").className="msg";$("#chk").textContent="Volgende"};
 $("#pool").onchange=reset;
+function rec(n,ok){const x=st(n).slice();if(ok)x[0]++;else{x[0]=0;x[1]++}P[n]=x;save();prog()}
+function prog(){const n=V.filter(learned).length;$("#pn").textContent=n;$("#pb").style.width=(n/V.length*100)+"%";$('#pool option[value="m"]').textContent="Mijn fouten ("+V.filter(isMis).length+")"}
+let arm=0;$("#rs").onclick=()=>{if(!arm){arm=1;$("#rs").textContent="Zeker weten? Tik nogmaals";setTimeout(()=>{arm=0;$("#rs").textContent="Wis voortgang"},4000)}else{arm=0;P={};save();prog();$("#rs").textContent="Wis voortgang";reset()}};
+prog();
 document.addEventListener("keydown",e=>{if(e.key==="Enter"&&!$("#oefen").hidden){e.preventDefault();check()}});
 </script>
 </body>
