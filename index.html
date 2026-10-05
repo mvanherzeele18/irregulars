@@ -84,7 +84,7 @@ select{font:inherit;padding:9px;border:2px solid var(--line);border-radius:8px;b
     <select id="pool"></select>
   </div>
   <div class="q">
-    <div class="stat"><span>Goed: <b id="sg">0</b></span><span>Fout: <b id="sf">0</b></span><span>Reeks: <b id="ss">0</b></span></div>
+    <div class="stat"><span>Vraag: <b id="sp"></b></span><span>Goed: <b id="sg">0</b></span><span>Fout: <b id="sf">0</b></span><span>Reeks: <b id="ss">0</b></span></div>
     <div class="inf" id="inf"></div>
     <div class="fs">
       <div><label for="a2">Past simple</label><input type="text" id="a2" autocomplete="off" autocapitalize="off" spellcheck="false"></div>
@@ -233,7 +233,7 @@ const fm=v=>v.join(" – ");
 const $=s=>document.querySelector(s);
 // tabs
 document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>show(b.dataset.t));
-function show(id){document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-selected",b.dataset.t===id));document.querySelectorAll("section").forEach(s=>s.hidden=s.id!==id);if(id==="oefen")next()}
+function show(id){document.querySelectorAll("nav button").forEach(b=>b.setAttribute("aria-selected",b.dataset.t===id));document.querySelectorAll("section").forEach(s=>s.hidden=s.id!==id);if(id==="oefen"&&!cur)reset()}
 // list
 let hidden=false;
 function render(){const q=$("#zoek").value.trim().toLowerCase();
@@ -245,14 +245,21 @@ $("#tb").onclick=e=>{if(e.target.classList.contains("cv"))e.target.classList.tog
 render();
 // tricks
 $("#trucs").innerHTML='<p style="color:var(--mute);margin-top:0">Elke regel hieronder is gecontroleerd op de hele lijst: er zijn geen uitzonderingen. Staat de voorwaarde er, dan geldt het resultaat altijd.</p>'+T.map((t,i)=>`<article class="tr"><h3>${t.t}</h3><p><b>${t.d}</b></p><p class="ex">Klopt voor alle ${M[i].length} werkwoorden in de lijst met deze voorwaarde:</p><div class="chips">${M[i].map(v=>`<span class="chip">${fm(v)}</span>`).join("")}</div><button class="btn s" data-i="${i}">Oefen deze groep</button></article>`).join("")+`<article class="tr"><h3>Geen regel? Dan moet je ze stampen</h3><p class="ex">Deze ${REST.length} werkwoorden vallen buiten alle regels hierboven.</p><div class="chips">${REST.map(v=>`<span class="chip">${fm(v)}</span>`).join("")}</div><button class="btn s" data-i="x">Oefen deze groep</button></article>`;
-$("#trucs").onclick=e=>{const i=e.target.dataset.i;if(i!==undefined){$("#pool").value=i;show("oefen")}};
+$("#trucs").onclick=e=>{const i=e.target.dataset.i;if(i!==undefined){$("#pool").value=i;show("oefen");reset()}};
 // practice
 $("#pool").innerHTML='<option value="all">Alle werkwoorden</option>'+T.map((t,i)=>`<option value="${i}">${t.t.length>50?t.t.slice(0,48)+"…":t.t}</option>`).join("")+'<option value="x">Werkwoorden zonder regel</option>';
 let cur,g=0,f=0,s=0,done=false;
 function pool(){const p=$("#pool").value;return p==="all"?V:p==="x"?REST:M[p]}
-function next(){const P=pool();let n;do{n=P[Math.floor(Math.random()*P.length)]}while(P.length>1&&n===cur);cur=n;done=false;
- $("#inf").textContent=n[0];["a2","a3"].forEach(id=>{const i=$("#"+id);i.value="";i.className="";i.disabled=false});
- $("#msg").textContent="";$("#msg").className="msg";$("#chk").textContent="Controleer";$("#a2").focus()}
+let deck=[],total=0,fresh=false;
+function reset(){deck=[];cur=null;next()}
+function next(){let fin=false;
+ if(!deck.length){fin=!!cur;const P=pool().slice();for(let i=P.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[P[i],P[j]]=[P[j],P[i]]}
+  if(P.length>1&&P[P.length-1]===cur){[P[0],P[P.length-1]]=[P[P.length-1],P[0]]}
+  deck=P;total=P.length}
+ cur=deck.pop();done=false;
+ $("#sp").textContent=(total-deck.length)+" van "+total;
+ $("#inf").textContent=cur[0];["a2","a3"].forEach(id=>{const i=$("#"+id);i.value="";i.className="";i.disabled=false});
+ $("#msg").textContent=fin?"Reeks klaar! Hier begint een nieuwe reeks.":"";$("#msg").className="msg";$("#chk").textContent="Controleer";$("#a2").focus()}
 function ok(ans,cor){const alts=cor.split("/"),tk=ans.trim().toLowerCase().split("/").map(x=>x.trim()).filter(Boolean);return tk.length>0&&tk.every(x=>alts.includes(x))}
 function check(){if(done){next();return}
  const r2=ok($("#a2").value,cur[1]),r3=ok($("#a3").value,cur[2]);
@@ -264,7 +271,7 @@ function check(){if(done){next();return}
 function stats(){$("#sg").textContent=g;$("#sf").textContent=f;$("#ss").textContent=s}
 $("#chk").onclick=check;
 $("#show").onclick=()=>{if(done)return;done=true;f++;s=0;stats();$("#a2").value=cur[1];$("#a3").value=cur[2];$("#msg").textContent=`${cur[0]} – ${cur[1]} – ${cur[2]}`;$("#msg").className="msg";$("#chk").textContent="Volgende"};
-$("#pool").onchange=next;
+$("#pool").onchange=reset;
 document.addEventListener("keydown",e=>{if(e.key==="Enter"&&!$("#oefen").hidden){e.preventDefault();check()}});
 </script>
 </body>
